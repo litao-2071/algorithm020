@@ -5,8 +5,29 @@
  */
 
 // @lc code=start
+// 从1-i选出1个，从i-n选出一个
 func combine(n int, k int) [][]int {
-	results := make([][]int, 0)
+	res := [][]int{}
+	var helper func(start int, path []int)
+	helper = func(start int, path []int) {
+		if len(path) == k {
+			temp := make([]int, len(path))
+			copy(temp, path)
+			res = append(res, temp)
+			return
+		}
+		for i := start; i <= n; i++ {
+			path = append(path, i)
+			helper(i+1, path)
+			path = path[:len(path)-1]
+		}
+	}
+	helper(1, []int{})
+	return res
+}
+
+func combine1(n int, k int) [][]int {
+	var results [][]int
 	temp := make([]int, 0, k)
 	var combineCore func(int)
 	combineCore = func(curN int) {
@@ -23,10 +44,11 @@ func combine(n int, k int) [][]int {
 			return
 		}
 		temp = append(temp, curN)
-		// 到下一层
+		// 选择当前位置
 		combineCore(curN + 1)
 		// 清理本层
 		temp = temp[:len(temp)-1]
+		// 不选择当前位置
 		combineCore(curN + 1)
 
 	}
